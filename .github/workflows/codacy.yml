@@ -29,19 +29,21 @@ jobs:
     name: Codacy Security Scan
     runs-on: ubuntu-latest
 # ... (omitting lines for brevity, focusing on the steps block) ...
+# ... (omitting lines for brevity, focusing on the steps block) ...
     steps:
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout code
         uses: actions/checkout@v4
-      # Execute Codacy Analysis CLI and generate a SARIF output with the security issues identified during the analysis
+        
+      # Execute Codacy Analysis CLI and generate a SARIF output.
+      # *** UPDATED ACTION VERSION HERE ***
       - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@d840f886c4bd4edc059706d09c6a1586111c540b
+        uses: codacy/codacy-analysis-cli-action@v2
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           verbose: true
           output: results.sarif
           format: sarif
-          # Ensure gh-code-scanning-category is NOT present here
           gh-code-scanning-compat: true
           max-allowed-issues: 2147483647
           
@@ -50,7 +52,5 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: results.sarif
-          # MANDATORY FIX: Providing a unique category
+          # Retain the unique category to explicitly define the run
           category: Codacy-Security-Analysis-Run
-          # ADDING 'name' FOR EXTRA ROBUSTNESS/UNIQUE IDENTIFICATION
-          name: Codacy Security Scan Upload
